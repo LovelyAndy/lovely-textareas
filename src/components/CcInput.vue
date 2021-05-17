@@ -1,7 +1,7 @@
 <template>
   <div class="cc-input">
     <input
-      v-if="propsToPass.type !== 'textarea'"
+      v-if="valueType !== 'textarea'"
       v-bind="propsToPass"
       v-model="model"
       @blur="$emit('blur')"
@@ -9,7 +9,7 @@
       ref="input"
     />
     <textarea
-      v-if="propsToPass.type === 'textarea'"
+      v-if="valueType === 'textarea'"
       v-bind="propsToPass"
       v-model="model"
       @blur="$emit('blur')"
