@@ -2,7 +2,7 @@
   <div class="home">
     <div class="textarea">
         autofocus
-        <CcInput valueType="textarea" :autofocus="true" />
+        <CcInput valueType="textarea" :autofocus="true"/>
       </div>
       <div class="textarea">
         debounce

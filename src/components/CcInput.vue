@@ -1,20 +1,30 @@
 <template>
   <div class="cc-input">
     <input
-      v-if="propsToPass.type !== 'textarea'"
-      v-bind="propsToPass"
+      v-if="type !== 'textarea'"
+      :disabled="disabled"
+      :type="type"
+      :placeholder="placeholder"
+      :readonly="readonly"
+      :required="required"
+      :autofocus="autofocus"
       v-model="model"
-      @blur="$emit('blur')"
       data-cy="input-field"
       ref="input"
+      @blur="$emit('blur')"
     />
     <textarea
-      v-if="propsToPass.type === 'textarea'"
-      v-bind="propsToPass"
-      v-model="model"
-      @blur="$emit('blur')"
+      v-if="type === 'textarea'"
+      :disabled="disabled"
+      :placeholder="placeholder"
+      :readonly="readonly"
+      :required="required"
+      :rows="rows"
+      :autofocus="autofocus"
       data-cy="input-field"
       ref="textarea"
+      v-model="model"
+      @blur="$emit('blur')"
       @input="
         $emit('input', $event.target.value)
         autogrowTextarea($event)
@@ -28,25 +38,24 @@ export default {
   name: 'CcInput',
   components: {},
   props: {
+    /** HTML5 attribute */
+    disabled: { type: String },
+    /** HTML5 attribute (can also be 'textarea' in which case a `<textarea />` is rendered) */
+    type: { type: String, default: 'text' },
+    /** HTML5 attribute */
+    placeholder: { type: String },
+    /** HTML5 attribute */
+    readonly: { type: Boolean },
+    /** HTML5 attribute */
+    required: { type: Boolean },
+    /** HTML5 attribute (only for textarea) */
+    rows: { type: String },
     /** v-model */
     value: { type: [String, Number], default: '' },
-    /**
-     * valueType: 'number' の場合、入力をnumberに変更したうえemitする。もしNaNになってしまえば、stringとしてemitする。
-     * @type {'number' | undefined}
-     */
-    valueType: { type: [String, undefined], default: undefined },
     autofocus: { type: Boolean, default: false },
     autogrow: { type: Boolean, default: false },
   },
-  mounted() {
-    if (this.autofocus) {
-      if (this.propsToPass.type !== 'textarea') {
-        this.focusInput()
-      } else {
-        this.focusTextArea()
-      }
-    }
-  },
+  mounted() {},
   watch: {
     innerValue(newVal) {
       setTimeout(() => {
@@ -80,19 +89,14 @@ export default {
         return this.value
       },
       set(val) {
-        const { propsToPass } = this
-        if (propsToPass.type === 'number') {
+        const { type } = this
+        if (type === 'number') {
           const valAsNumberIfNotNaN = !isNaN(Number(val)) ? Number(val) : val
           this.$emit('input', valAsNumberIfNotNaN)
           return
         }
         this.$emit('input', val)
       },
-    },
-    propsToPass() {
-      const { $attrs, valueType } = this
-      const type = $attrs.type ? $attrs.type : valueType === 'number' ? 'number' : undefined
-      return { ...$attrs, type }
     },
   },
 }
