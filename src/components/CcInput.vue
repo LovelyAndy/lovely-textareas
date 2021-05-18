@@ -40,7 +40,7 @@ export default {
   },
   mounted() {
     if (this.autofocus) {
-      if (this.propsToPass.type !== 'textarea') {
+      if (this.valueType !== 'textarea') {
         this.focusInput()
       } else {
         this.focusTextArea()
@@ -64,7 +64,7 @@ export default {
       this.$refs.input.focus()
     },
     focusTextArea() {
-      this.$refs.textArea.focus()
+      this.$refs.textarea.focus()
     },
     autogrowTextarea(e) {
       e.target.style.height = 'auto'
