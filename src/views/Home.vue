@@ -6,11 +6,11 @@
       </div>
       <div class="textarea">
         debounce
-        <CcInput valueType="textarea" :debounce="300" />
+        <CcInput valueType="input" :debounce="300" />
       </div>
       <div class="textarea">
         autogrow
-        <CcInput valueType="textarea" :autogrow="true" />
+        <CcInput valueType="textarea" :autogrow="true"/>
       </div>
     </div>
   </div>

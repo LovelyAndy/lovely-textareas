@@ -54,18 +54,21 @@ export default {
     value: { type: [String, Number], default: '' },
     autofocus: { type: Boolean, default: false },
     autogrow: { type: Boolean, default: false },
+    debounce: { type: Number, default: 500 },
   },
   mounted() {},
   watch: {
     innerValue(newVal) {
-      setTimeout(() => {
-        this.$emit('input', newVal)
-      }, 300)
+      debounceInput(newVal)
+      // setTimeout(() => {
+      //   this.$emit('input', newVal)
+      // }, 300)
     },
   },
   data() {
     return {
       innerValue: this.value,
+      timeout: null,
     }
   },
   methods: {
@@ -73,11 +76,18 @@ export default {
       this.$refs.input.focus()
     },
     focusTextArea() {
-      this.$refs.textArea.focus()
+      this.$refs.textarea.focus()
     },
     autogrowTextarea(e) {
       e.target.style.height = 'auto'
       e.target.style.height = `${e.target.scrollHeight}px`
+    },
+    debounceInput() {
+      clearTimeout(this.timeout)
+      var self = this
+      this.timeout = setTimeout(function () {
+        self.outputValue = self.value
+      }, 1000)
     },
   },
   computed: {

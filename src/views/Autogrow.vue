@@ -24,7 +24,6 @@ export default {
       clearTimeout(this.timeout)
       var self = this
       this.timeout = setTimeout(function () {
-        console.log('searching:', self.value)
         self.outputValue = self.value
       }, 1000)
     },
