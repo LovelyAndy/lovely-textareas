@@ -2,15 +2,15 @@
   <div class="home">
     <div class="textarea">
         autofocus
-        <CcInput valueType="textarea" :autofocus="true"/>
+        <CcInput type="textarea" :autofocus="true"/>
       </div>
       <div class="textarea">
         debounce
-        <CcInput valueType="input" :debounce="300" />
+        <CcInput type="input" :debounce="1000" />
       </div>
       <div class="textarea">
         autogrow
-        <CcInput valueType="textarea" :autogrow="true"/>
+        <CcInput type="textarea" :autogrow="true"/>
       </div>
     </div>
   </div>
