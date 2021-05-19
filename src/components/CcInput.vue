@@ -9,7 +9,7 @@
       :required="required"
       :autofocus="autofocus"
       :debounce="debounce"
-      v-model="data"
+      v-model="model"
       data-cy="input-field"
       ref="input"
       @blur="$emit('blur')"
@@ -25,7 +25,7 @@
       :debounce="debounce"
       data-cy="input-field"
       ref="textarea"
-      v-model="data"
+      v-model="model"
       @blur="$emit('blur')"
     />
   </div>
@@ -54,21 +54,29 @@ export default {
     autogrow: { type: Boolean, default: false },
     debounce: { type: Number, default: 500 },
   },
-  mounted() {},
-  watch: {
-    data(newVal) {
-      if (this.type === 'textarea' && this.autogrow) {
-        this.$refs.textarea.style.height = 'auto'
-        this.$refs.textarea.style.height = `${this.$refs.textarea.scrollHeight}px`
+  mounted() {
+    if (this.autofocus) {
+      if (this.type !== 'textarea') {
+        this.focusInput()
+      } else {
+        this.focusTextArea()
       }
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => this.$emit('input', newVal), this.debounce)
-    },
+    }
   },
+  // watch: {
+  //   data(newVal) {
+  //     if (this.type === 'textarea' && this.autogrow) {
+  //       this.$refs.textarea.style.height = 'auto'
+  //       this.$refs.textarea.style.height = `${this.$refs.textarea.scrollHeight}px`
+  //     }
+  //     clearTimeout(this.timeout)
+  //     this.timeout = setTimeout(() => this.$emit('input', newVal), this.debounce)
+  //   },
+  // },
   data() {
     return {
       timeout: null,
-      data: null,
+      // data: null,
       innerValue: this.value,
     }
   },
@@ -84,26 +92,27 @@ export default {
     listenersWithoutInput() {
       return { ...this.$listeners, input: undefined }
     },
-    // model: {
-    //   get() {
-    //     return this.value
-    //   },
-    //   set(val) {
-    //     const { type } = this
-    //     if (this.type === 'textarea' && this.autogrow) {
-    //       this.$refs.textarea.style.height = 'auto'
-    //       this.$refs.textarea.style.height = `${this.$refs.textarea.scrollHeight}px`
-    //     }
-    //     clearTimeout(this.timeout)
-    //     this.timeout = setTimeout(() => this.$emit('input', newVal), this.debounce)
-    //     if (type === 'number') {
-    //       const valAsNumberIfNotNaN = !isNaN(Number(val)) ? Number(val) : val
-    //       this.$emit('input', valAsNumberIfNotNaN)
-    //     } else {
-    //       this.$emit('input', val)
-    //     }
-    //   },
-    // },
+    model: {
+      get() {
+        return this.innerValue
+      },
+      set(val) {
+        const { type } = this
+        this.innerValue = val
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => this.$emit('input', val), this.debounce)
+        if (this.type === 'textarea' && this.autogrow) {
+          this.$refs.textarea.style.height = 'auto'
+          this.$refs.textarea.style.height = `${this.$refs.textarea.scrollHeight}px`
+        }
+        if (type === 'number') {
+          const valAsNumberIfNotNaN = !isNaN(Number(val)) ? Number(val) : val
+          this.$emit('input', valAsNumberIfNotNaN)
+        } else {
+          this.$emit('input', val)
+        }
+      },
+    },
   },
 }
 </script>
