@@ -9,7 +9,7 @@
       :required="required"
       :autofocus="autofocus"
       :debounce="debounce"
-      v-model="model"
+      v-model="userInput"
       data-cy="input-field"
       ref="input"
       @blur="$emit('blur')"
@@ -25,7 +25,7 @@
       :debounce="debounce"
       data-cy="input-field"
       ref="textarea"
-      v-model="model"
+      v-model="userInput"
       @blur="$emit('blur')"
     />
   </div>
@@ -52,66 +52,41 @@ export default {
     value: { type: [String, Number], default: '' },
     autofocus: { type: Boolean, default: false },
     autogrow: { type: Boolean, default: false },
-    debounce: { type: Number, default: 500 },
+    debounce: { type: Number, default: 1000 },
   },
   mounted() {
     if (this.autofocus) {
-      if (this.type !== 'textarea') {
-        this.focusInput()
-      } else {
-        this.focusTextArea()
-      }
+      focus()
     }
   },
-  // watch: {
-  //   data(newVal) {
-  //     if (this.type === 'textarea' && this.autogrow) {
-  //       this.$refs.textarea.style.height = 'auto'
-  //       this.$refs.textarea.style.height = `${this.$refs.textarea.scrollHeight}px`
-  //     }
-  //     clearTimeout(this.timeout)
-  //     this.timeout = setTimeout(() => this.$emit('input', newVal), this.debounce)
-  //   },
-  // },
+  watch: {
+    userInput(newVal) {
+      if (this.type === 'textarea' && this.autogrow) {
+        this.$refs.textarea.style.height = 'auto'
+        this.$refs.textarea.style.height = `${this.$refs.textarea.scrollHeight}px`
+      }
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => this.$emit('input', newVal), this.debounce)
+    },
+  },
   data() {
     return {
       timeout: null,
-      // data: null,
-      innerValue: this.value,
+      userInput: null,
     }
   },
   methods: {
-    focusInput() {
-      this.$refs.input.focus()
-    },
-    focusTextArea() {
-      this.$refs.textarea.focus()
+    focus() {
+      if (this.type !== 'textarea') {
+        this.$refs.input.focus()
+      } else {
+        this.$refs.textarea.focus()
+      }
     },
   },
   computed: {
     listenersWithoutInput() {
       return { ...this.$listeners, input: undefined }
-    },
-    model: {
-      get() {
-        return this.innerValue
-      },
-      set(val) {
-        const { type } = this
-        this.innerValue = val
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => this.$emit('input', val), this.debounce)
-        if (this.type === 'textarea' && this.autogrow) {
-          this.$refs.textarea.style.height = 'auto'
-          this.$refs.textarea.style.height = `${this.$refs.textarea.scrollHeight}px`
-        }
-        if (type === 'number') {
-          const valAsNumberIfNotNaN = !isNaN(Number(val)) ? Number(val) : val
-          this.$emit('input', valAsNumberIfNotNaN)
-        } else {
-          this.$emit('input', val)
-        }
-      },
     },
   },
 }
